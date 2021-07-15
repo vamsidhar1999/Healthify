@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthify/Authentication/EnterMobile.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:healthify/Authentication/SplashScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,34 +27,12 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
 
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Healthify',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: EnterMobile(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Container(),
+      home: SplashScreen(),
     );
   }
 }
