@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:healthify/Authentication/EnterMobile.dart';
 import 'package:healthify/addPatient.dart';
 
 class Dashboard extends StatefulWidget {
@@ -16,8 +18,19 @@ class _DashboardState extends State<Dashboard> {
       appBar: AppBar(
         title: Text("Dashboard"),
       ),
-      body: Container(
-        child: Text("No patients right now"),
+      body: Center(
+        child: Container(
+          child: ElevatedButton(
+            child: Text("Logout"),
+            onPressed: (){
+              FirebaseAuth.instance.signOut();
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => (EnterMobile())));
+            },
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),

@@ -20,12 +20,24 @@ class _AddPatientState extends State<AddPatient> {
   TextEditingController _diagnosis = TextEditingController();
   int gender_value = 0;
 
+  String dropdownValue = 'Select';
+  List<String> doctors = ['Select'];
+  List<int> docId = [];
+
+  final _formKey = GlobalKey<FormState>();
+
   textField(String text, var controller) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
       child: Container(
         padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
-        child: TextField(
+        child: TextFormField(
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Required';
+            }
+            return null;
+          },
           controller: controller,
           cursorColor: Colors.purple,
           style: TextStyle(fontSize: 20, color: Colors.black),
@@ -45,6 +57,22 @@ class _AddPatientState extends State<AddPatient> {
     );
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+      _getDoctors();
+    super.initState();
+  }
+
+  _getDoctors() async {
+    var snapShot = await FirebaseFirestore.instance.collection("doctors").get();
+    snapShot.docs.forEach((element) {
+      doctors.add(element.data()["name"]);
+      docId.add(element.data()["id"]);
+    });
+    setState(() {});
+  }
+
   _admit() async {
     final user = FirebaseAuth.instance.currentUser;
     Map<String, dynamic> data = <String, dynamic>{
@@ -52,6 +80,7 @@ class _AddPatientState extends State<AddPatient> {
       "age": _age.text,
       "gender": gender_value == 0 ? "Male": "Female",
       "mobile": user.phoneNumber,
+      "doctor": dropdownValue
     };
     FirebaseFirestore.instance
         .collection("user")
@@ -70,83 +99,120 @@ class _AddPatientState extends State<AddPatient> {
       appBar: AppBar(
         title: Text("Admit Patient"),
       ),
-      body: Column(
-        children: [
-          textField("Patient Name", _name),
-          textField("Age", _age),
-          textField("Mobile", _mobile),
-          textField("Address", _address),
-          textField("Diagnosis", _diagnosis),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text('Gender'),
-                SizedBox(
-                  width: 10,
-                ),
-                GestureDetector(
-                  onTap: () => setState(() => gender_value = 0),
-                  child: Container(
-                      height: 50,
-                      width: 30,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        color: gender_value == 0
-                            ? const Color(0xffeda5f0)
-                            : Colors.grey,
-                      ),
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          physics: ScrollPhysics(),
+          child: Column(
+            children: [
+              textField("Patient Name", _name),
+              textField("Age", _age),
+              textField("Mobile", _mobile),
+              textField("Address", _address),
+              textField("Diagnosis", _diagnosis),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text('Gender'),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    GestureDetector(
+                      onTap: () => setState(() => gender_value = 0),
+                      child: Container(
+                          height: 50,
+                          width: 30,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            color: gender_value == 0
+                                ? const Color(0xffeda5f0)
+                                : Colors.grey,
+                          ),
+                          child: Center(
+                            child: Text("M"),
+                          )),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    GestureDetector(
+                      onTap: () => setState(() => gender_value = 1),
                       child: Center(
-                        child: Text("M"),
-                      )),
+                        child: Container(
+                            height: 50,
+                            width: 30,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                              color: gender_value == 1
+                                  ? const Color(0xffeda5f0)
+                                  : Colors.grey,
+                            ),
+                            child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Center(
+                                  child: Text(
+                                    "F",
+                                    ),
+                                ))),
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  width: 5,
-                ),
-                GestureDetector(
-                  onTap: () => setState(() => gender_value = 1),
-                  child: Center(
-                    child: Container(
-                        height: 50,
-                        width: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          color: gender_value == 1
-                              ? const Color(0xffeda5f0)
-                              : Colors.grey,
-                        ),
-                        child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Center(
-                              child: Text(
-                                "F",
-                                ),
-                            ))),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
               child: Container(
-                height: 50,
-                child: MaterialButton(
-                  onPressed: _admit,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                  ),
-                  color: Colors.purple,
-                  child: Text(
-                    "Submit",
-                  ),
+                padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
+                child: DropdownButtonFormField<String>(
+                  value: dropdownValue,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  validator: (value) {
+                    if (value == "Select" || value.isEmpty) {
+                      return 'Required';
+                    }
+                    return null;
+                  },
+                  style: const TextStyle(color: Colors.deepPurple),
+                  onChanged: (String newValue) {
+                    setState(() {
+                      dropdownValue = newValue;
+                    });
+                  },
+                  items: doctors
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                 ),
               ),
             ),
-          )
-        ],
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+                  child: Container(
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: (){
+                        if (_formKey.currentState.validate()) {
+                          _admit();
+                        }
+                      },
+                      child: Text(
+                        "Submit", style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

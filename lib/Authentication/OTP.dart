@@ -7,6 +7,7 @@ import 'package:adobe_xd/page_link.dart';
 import 'package:flutter/widgets.dart';
 import 'package:healthify/Authentication/EnterMobile.dart';
 import 'package:healthify/Dashboard.dart';
+import 'package:healthify/docHomePage.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -80,10 +81,20 @@ class _OTPState extends State<OTP> {
             print(e);
           }
 
+          var snapShot = await FirebaseFirestore.instance.collection("doctors")
+              .where("mobile", isEqualTo: widget.phone.trim()).get();
+          if(snapShot.docs.length==1){
             Navigator.pop(context);
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => (Dashboard())));
-
+                context,
+                MaterialPageRoute(builder: (context) => (DocHomePage())));
+          }else {
+            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => (Dashboard())));
+          }
+          print(snapShot.docs);
           //This callback would gets called when verification is done automatically
         },
         verificationFailed: (FirebaseAuthException exception) {
@@ -343,10 +354,20 @@ class _OTPState extends State<OTP> {
                     if (user != null) {
                       // Navigator.pop(context);
                       pref.setBool('phone', true);
-                      String uid = user.uid;
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(
-                              builder: (context) => Dashboard()));
+                      var snapShot = await FirebaseFirestore.instance.collection("doctors")
+                          .where("mobile", isEqualTo: widget.phone.trim()).get();
+                      if(snapShot.docs.length==1){
+                        Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => (DocHomePage())));
+                      }else {
+                        Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => (Dashboard())));
+                      }
+                      print(snapShot.docs);
                       ////BUTTON ON PRESS
                     }
                   }
