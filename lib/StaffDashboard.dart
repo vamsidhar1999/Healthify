@@ -3,20 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:healthify/Authentication/EnterMobile.dart';
 import 'package:healthify/addPatient.dart';
 
-class Dashboard extends StatefulWidget {
-  const Dashboard({Key key}) : super(key: key);
+class StaffDashboard extends StatefulWidget {
+  const StaffDashboard({Key key}) : super(key: key);
 
   @override
-  _DashboardState createState() => _DashboardState();
+  _StaffDashboardState createState() => _StaffDashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _StaffDashboardState extends State<StaffDashboard> {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Dashboard"),
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Container(

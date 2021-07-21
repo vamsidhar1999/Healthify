@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:healthify/Dashboard.dart';
+import 'package:healthify/StaffDashboard.dart';
 import 'package:healthify/styles.dart';
 
 class AddPatient extends StatefulWidget {
@@ -80,16 +80,18 @@ class _AddPatientState extends State<AddPatient> {
       "age": _age.text,
       "gender": gender_value == 0 ? "Male": "Female",
       "mobile": user.phoneNumber,
-      "doctor": dropdownValue
+      "doctor": dropdownValue,
+      "address": _address.text,
+      "diagnosis": _diagnosis.text
     };
     FirebaseFirestore.instance
-        .collection("user")
+        .collection("patients")
         .doc(user.uid)
         .set(data)
         .then((value) {
       Navigator.pop(context);
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Dashboard()));
+          context, MaterialPageRoute(builder: (context) => StaffDashboard()));
     });
   }
 
@@ -98,6 +100,7 @@ class _AddPatientState extends State<AddPatient> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Admit Patient"),
+        automaticallyImplyLeading: false,
       ),
       body: Form(
         key: _formKey,
@@ -204,7 +207,7 @@ class _AddPatientState extends State<AddPatient> {
                         }
                       },
                       child: Text(
-                        "Submit", style: TextStyle(color: Colors.white),
+                        "Admit", style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ),

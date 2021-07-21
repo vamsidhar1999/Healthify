@@ -6,7 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter/widgets.dart';
 import 'package:healthify/Authentication/EnterMobile.dart';
-import 'package:healthify/Dashboard.dart';
+import 'package:healthify/StaffDashboard.dart';
 import 'package:healthify/docHomePage.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
@@ -92,9 +92,8 @@ class _OTPState extends State<OTP> {
             Navigator.pop(context);
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => (Dashboard())));
+                MaterialPageRoute(builder: (context) => (StaffDashboard())));
           }
-          print(snapShot.docs);
           //This callback would gets called when verification is done automatically
         },
         verificationFailed: (FirebaseAuthException exception) {
@@ -365,9 +364,8 @@ class _OTPState extends State<OTP> {
                         Navigator.pop(context);
                         Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => (Dashboard())));
+                            MaterialPageRoute(builder: (context) => (StaffDashboard())));
                       }
-                      print(snapShot.docs);
                       ////BUTTON ON PRESS
                     }
                   }
