@@ -5,13 +5,16 @@ import 'package:healthify/StaffDashboard.dart';
 import 'package:healthify/styles.dart';
 
 class AddPatient extends StatefulWidget {
-  const AddPatient({Key key}) : super(key: key);
+  String floor, room;
+  AddPatient(this.floor, this.room);
 
   @override
-  _AddPatientState createState() => _AddPatientState();
+  _AddPatientState createState() => _AddPatientState(this.floor, this.room);
 }
 
 class _AddPatientState extends State<AddPatient> {
+  _AddPatientState(this.floor, this.room);
+  String floor, room;
 
   TextEditingController _name = TextEditingController();
   TextEditingController _mobile = TextEditingController();
@@ -82,13 +85,18 @@ class _AddPatientState extends State<AddPatient> {
       "mobile": user.phoneNumber,
       "doctor": dropdownValue,
       "address": _address.text,
-      "diagnosis": _diagnosis.text
+      "diagnosis": _diagnosis.text,
+      "floor": floor,
+      "room": room
     };
     FirebaseFirestore.instance
         .collection("patients")
         .doc(user.uid)
         .set(data)
-        .then((value) {
+        .then((value) async {
+          var snapShot = await FirebaseFirestore.instance.collection("beds").where("floor", isEqualTo: floor)
+          .where("room", isEqualTo: room).get();
+          FirebaseFirestore.instance.collection("beds").doc(snapShot.docs[0].id).update({"status":"filled"});
       Navigator.pop(context);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => StaffDashboard()));

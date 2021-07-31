@@ -32,6 +32,13 @@ class _SplashScreenState extends State<SplashScreen> {
                   .toString()
                   .substring(3))
           .get();
+      var snapShot1 = await FirebaseFirestore.instance
+          .collection("patients")
+          .where("mobile",
+          isEqualTo: FirebaseAuth.instance.currentUser.phoneNumber
+              .toString()
+              .substring(3))
+          .get();
       if (snapShot.docs.length == 1) {
         Navigator.pop(context);
         Navigator.push(

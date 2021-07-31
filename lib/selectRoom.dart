@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:healthify/addPatient.dart';
 
 class SelectRoom extends StatefulWidget {
   const SelectRoom({Key key}) : super(key: key);
@@ -9,8 +10,9 @@ class SelectRoom extends StatefulWidget {
 }
 
 class _SelectRoomState extends State<SelectRoom> {
-
-  String dropdownValue = "";
+  String dropdownValue = "shared";
+  String value;
+  var finalDoc;
 
   @override
   Widget build(BuildContext context) {
@@ -25,24 +27,18 @@ class _SelectRoomState extends State<SelectRoom> {
             padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
             child: Container(
               padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
-              child: DropdownButtonFormField<String>(
+              child: DropdownButton<String>(
                 value: dropdownValue,
                 icon: const Icon(Icons.arrow_downward),
                 iconSize: 24,
                 elevation: 16,
-                validator: (value) {
-                  if (value == "Select" || value.isEmpty) {
-                    return 'Required';
-                  }
-                  return null;
-                },
                 style: const TextStyle(color: Colors.deepPurple),
                 onChanged: (String newValue) {
                   setState(() {
                     dropdownValue = newValue;
                   });
                 },
-                items: ["Select", "shared", "private"]
+                items: <String>["shared", "private"]
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -53,11 +49,11 @@ class _SelectRoomState extends State<SelectRoom> {
             ),
           ),
           FutureBuilder<QuerySnapshot>(
-            // <2> Pass `Future<QuerySnapshot>` to future
+              // <2> Pass `Future<QuerySnapshot>` to future
               future: FirebaseFirestore.instance
-        .collection('beds')
-        .where("status", isEqualTo: "available")
-        .where("type", isEqualTo: dropdownValue)
+                  .collection('beds')
+                  .where("status", isEqualTo: "available")
+                  .where("type", isEqualTo: dropdownValue)
                   .get(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -67,29 +63,59 @@ class _SelectRoomState extends State<SelectRoom> {
                       shrinkWrap: true,
                       children: documents
                           .map((doc) => Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  offset: Offset(0.0, 3.0),
-                                  blurRadius: 25.0)
-                            ],
-                          ),
-                          child: Card(
-                            child: ListTile(
-                              title: Text(doc['room']),
-                              subtitle: Text("floor : "+doc['floor']),
-                            ),
-                          ),
-                        ),
-                      ))
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          offset: Offset(0.0, 3.0),
+                                          blurRadius: 25.0)
+                                    ],
+                                  ),
+                                  child: Card(
+                                    color: Colors.green,
+                                    child: RadioListTile(
+                                      value: doc.id,
+                                      groupValue: value,
+                                      onChanged: (ind) {
+                                        setState(() {
+                                          value = ind;
+                                        });
+                                        finalDoc = doc;
+                                      },
+                                      title: Text(
+                                        doc['room'],
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      subtitle: Text(
+                                        "floor : " + doc['floor'],
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ))
                           .toList());
                 } else {
                   return Text("It's Error!");
                 }
               }),
+        ],
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FloatingActionButton(
+            child: Icon(Icons.arrow_right_alt),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          AddPatient(finalDoc["floor"], finalDoc["room"])));
+            },
+          ),
         ],
       ),
     );

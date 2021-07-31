@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:healthify/Authentication/EnterMobile.dart';
 import 'package:healthify/StaffDashboard.dart';
 import 'package:healthify/docHomePage.dart';
+import 'package:healthify/scanPreview.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -355,12 +356,20 @@ class _OTPState extends State<OTP> {
                       pref.setBool('phone', true);
                       var snapShot = await FirebaseFirestore.instance.collection("doctors")
                           .where("mobile", isEqualTo: widget.phone.trim()).get();
+                      var snapShot1 = await FirebaseFirestore.instance.collection("patients")
+                          .where("mobile", isEqualTo: widget.phone.trim()).get();
                       if(snapShot.docs.length==1){
                         Navigator.pop(context);
                         Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => (DocHomePage())));
-                      }else {
+                      }else if(snapShot1.docs.length==1){
+                        Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => (ScanPreview())));
+                      }
+                      else {
                         Navigator.pop(context);
                         Navigator.push(
                             context,

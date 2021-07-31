@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healthify/Authentication/EnterMobile.dart';
 import 'package:healthify/addPatient.dart';
+import 'package:healthify/selectRoom.dart';
 
 class StaffDashboard extends StatefulWidget {
   const StaffDashboard({Key key}) : super(key: key);
@@ -37,7 +38,7 @@ class _StaffDashboardState extends State<StaffDashboard> {
         child: Icon(Icons.add),
         onPressed: (){
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddPatient()));
+              context, MaterialPageRoute(builder: (context) => SelectRoom()));
         },
       ),
     );
