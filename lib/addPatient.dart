@@ -82,11 +82,12 @@ class _AddPatientState extends State<AddPatient> {
       "name": _name.text,
       "age": _age.text,
       "gender": gender_value == 0 ? "Male": "Female",
-      "mobile": user.phoneNumber,
+      "mobile": user.phoneNumber.toString().substring(3),
       "doctor": dropdownValue,
       "address": _address.text,
       "diagnosis": _diagnosis.text,
       "floor": floor,
+      "admitted": "NO",
       "room": room
     };
     FirebaseFirestore.instance

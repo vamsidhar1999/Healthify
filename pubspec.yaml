@@ -37,6 +37,7 @@ dependencies:
   pin_code_fields: ^7.2.0
   flutter_screenutil: ^5.0.0+2
   firebase_messaging: ^10.0.4
+  flutter_barcode_scanner: ^2.0.0
 
 dev_dependencies:
   flutter_test:

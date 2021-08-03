@@ -3,8 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:healthify/Authentication/EnterMobile.dart';
+import 'package:healthify/PatientInfo.dart';
 import 'package:healthify/StaffDashboard.dart';
 import 'package:healthify/docHomePage.dart';
+import 'package:healthify/scanPreview.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -36,14 +38,23 @@ class _SplashScreenState extends State<SplashScreen> {
           .collection("patients")
           .where("mobile",
           isEqualTo: FirebaseAuth.instance.currentUser.phoneNumber
-              .toString()
-              .substring(3))
+              .toString().substring(3))
           .get();
       if (snapShot.docs.length == 1) {
         Navigator.pop(context);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => (DocHomePage())));
-      } else {
+      } else if(snapShot1.docs.length==1){
+        if(snapShot1.docs[0].data()["admitted"]=="NO") {
+          Navigator.pop(context);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ScanPreview()));
+        }else if(snapShot1.docs[0].data()["admitted"]=="YES") {
+          Navigator.pop(context);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => PatientInfo()));
+        }
+      }else{
         Navigator.pop(context);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => StaffDashboard()));

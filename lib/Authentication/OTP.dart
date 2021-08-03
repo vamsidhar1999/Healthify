@@ -84,12 +84,20 @@ class _OTPState extends State<OTP> {
 
           var snapShot = await FirebaseFirestore.instance.collection("doctors")
               .where("mobile", isEqualTo: widget.phone.trim()).get();
+          var snapShot1 = await FirebaseFirestore.instance.collection("patients")
+              .where("mobile", isEqualTo: widget.phone.trim()).get();
           if(snapShot.docs.length==1){
             Navigator.pop(context);
             Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => (DocHomePage())));
-          }else {
+          }else if(snapShot1.docs.length==1){
+            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => (ScanPreview())));
+          }
+          else {
             Navigator.pop(context);
             Navigator.push(
                 context,
