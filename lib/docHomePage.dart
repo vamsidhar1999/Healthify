@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healthify/Authentication/EnterMobile.dart';
+import 'package:healthify/PatientInfoDocVersion.dart';
 
 class DocHomePage extends StatefulWidget {
   const DocHomePage({Key key}) : super(key: key);
@@ -15,13 +16,14 @@ class _DocHomePageState extends State<DocHomePage> {
     var snapShot = await FirebaseFirestore.instance
         .collection('doctors')
         .where("mobile",
-        isEqualTo: FirebaseAuth.instance.currentUser.phoneNumber.toString().substring(3))
+            isEqualTo: FirebaseAuth.instance.currentUser.phoneNumber
+                .toString()
+                .substring(3))
         .get();
     String name = snapShot.docs[0].data()["name"];
     return FirebaseFirestore.instance
         .collection('patients')
-        .where("doctor",
-        isEqualTo: name)
+        .where("doctor", isEqualTo: name)
         .get();
   }
 
@@ -45,24 +47,33 @@ class _DocHomePageState extends State<DocHomePage> {
                       shrinkWrap: true,
                       children: documents
                           .map((doc) => Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                        decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    offset: Offset(0.0, 3.0),
-                                    blurRadius: 25.0)
-                              ],
-                        ),
-                              child: Card(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          offset: Offset(0.0, 3.0),
+                                          blurRadius: 25.0)
+                                    ],
+                                  ),
+                                  child: Card(
                                     child: ListTile(
                                       title: Text(doc['name']),
                                       subtitle: Text(doc['diagnosis']),
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    (PatientInfoDocVersion(
+                                                        Text(doc['mobile'])
+                                                            .toString()))));
+                                      },
                                     ),
                                   ),
-                            ),
-                          ))
+                                ),
+                              ))
                           .toList());
                 } else {
                   return Text("It's Error!");
@@ -72,11 +83,10 @@ class _DocHomePageState extends State<DocHomePage> {
             child: Container(
               child: ElevatedButton(
                 child: Text("Logout"),
-                onPressed: (){
+                onPressed: () {
                   FirebaseAuth.instance.signOut();
                   Navigator.pop(context);
-                  Navigator.push(
-                      context,
+                  Navigator.push(context,
                       MaterialPageRoute(builder: (context) => (EnterMobile())));
                 },
               ),

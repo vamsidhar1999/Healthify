@@ -1,18 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healthify/PatientCaseSheets.dart';
 import 'package:healthify/PatientMedication.dart';
 
-class PatientInfo extends StatefulWidget {
-  const PatientInfo({Key key}) : super(key: key);
+class PatientInfoDocVersion extends StatefulWidget {
+
+  String phone;
+  PatientInfoDocVersion(this.phone);
 
   @override
-  _PatientInfoState createState() => _PatientInfoState();
+  _PatientInfoDocVersionState createState() => _PatientInfoDocVersionState(phone);
 }
 
-class _PatientInfoState extends State<PatientInfo> {
+class _PatientInfoDocVersionState extends State<PatientInfoDocVersion> {
 
-  String phone = FirebaseAuth.instance.currentUser.phoneNumber.substring(3);
+  String phone;
+  _PatientInfoDocVersionState(this.phone);
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +42,12 @@ class _PatientInfoState extends State<PatientInfo> {
           )
         ],
       )),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: (){
+
+        },
+      ),
     );
   }
 }
