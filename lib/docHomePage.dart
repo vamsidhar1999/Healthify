@@ -67,8 +67,7 @@ class _DocHomePageState extends State<DocHomePage> {
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     (PatientInfoDocVersion(
-                                                        Text(doc['mobile'])
-                                                            .toString()))));
+                                                        Text(doc['mobile']).data))));
                                       },
                                     ),
                                   ),

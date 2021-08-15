@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healthify/Authentication/EnterMobile.dart';
+import 'package:healthify/PatientInfoStaffVersion.dart';
 import 'package:healthify/selectRoom.dart';
 
 class StaffDashboard extends StatefulWidget {
@@ -54,7 +55,12 @@ class _StaffDashboardState extends State<StaffDashboard> {
                               title: Text(doc['name']),
                               subtitle: Text(doc['diagnosis']),
                               onTap: (){
-
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                        (PatientInfoStaffVersion(
+                                            Text(doc['mobile']).data))));
                               },
                             ),
                           ),
