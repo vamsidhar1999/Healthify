@@ -21,7 +21,7 @@ class _PatientMedicationState extends State<PatientMedication> {
         .collection("patients")
         .where("mobile", isEqualTo: phone)
         .get();
-    var snapShot2 = await FirebaseFirestore.instance.collection("patients").doc(snapShot.docs[0].id).collection("medications").get();
+    var snapShot2 = await FirebaseFirestore.instance.collection("patients").doc(snapShot.docs[0].id).collection("Medications").get();
     return snapShot2;
   }
 
@@ -51,8 +51,8 @@ class _PatientMedicationState extends State<PatientMedication> {
                       ),
                       child: Card(
                         child: ListTile(
-                          title: Text(doc['time']),
-                          subtitle: Text(doc['medication']),
+                          title: Text(doc['medicine']+"\t"+doc['days']+" days"),
+                          subtitle: Text(doc['meals']+"\n"+doc['time'].toString()),
                         ),
                       ),
                     ),

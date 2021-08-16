@@ -19,9 +19,12 @@ class _PatientInfoDocVersionState extends State<PatientInfoDocVersion> {
   int _defaultChoiceIndex = 0;
   bool isSelected = false;
   TextEditingController _medicine = new TextEditingController();
+  TextEditingController _days = new TextEditingController();
 
   List<String> repeat = ["Before Meals", "After Meals"];
   List<String> time = ["Morning", "Afternoon", "Night"];
+
+  List<String> selectedReportList = [];
 
 
 
@@ -59,7 +62,36 @@ class _PatientInfoDocVersionState extends State<PatientInfoDocVersion> {
                                     decoration: InputDecoration(
                                       focusColor: Colors.white,
                                       labelStyle: TextStyle(fontSize: 20, color: Colors.black),
-                                      labelText: "Enter Case Sheets",
+                                      labelText: "Medicine Name",
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.purple),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.purple),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
+                                child: Container(
+                                  padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
+                                  child: TextFormField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Required';
+                                      }
+                                      return null;
+                                    },
+                                    controller: _days,
+                                    cursorColor: Colors.purple,
+                                    style: TextStyle(fontSize: 20, color: Colors.black),
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      focusColor: Colors.white,
+                                      labelStyle: TextStyle(fontSize: 20, color: Colors.black),
+                                      labelText: "No of Days",
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(color: Colors.purple),
                                       ),
@@ -78,7 +110,7 @@ class _PatientInfoDocVersionState extends State<PatientInfoDocVersion> {
                                       (int index) {
                                     return ChoiceChip(
                                       label: Text(repeat[index]),
-                                      selected: isSelected,
+                                      selected: index == _defaultChoiceIndex,
                                       selectedColor: Colors.blue,
                                       onSelected: (bool selected) {
                                         setState(() {
@@ -91,19 +123,26 @@ class _PatientInfoDocVersionState extends State<PatientInfoDocVersion> {
                                   },
                                 ),
                               ),
-                              MultiSelectChip(time),
+                              MultiSelectChip(time, onSelectionChanged: (selectedList) {
+                                print(selectedList);
+                                setState(() {
+                                  selectedReportList = selectedList;
+                                });
+                              },),
                               ElevatedButton(
                                   onPressed: () async {
-                                    Map<String, String> data = <String, String>{
-                                      "time": repeat[_defaultChoiceIndex],
-                                      "record": _medicine.text
+                                    Map<String, dynamic> data = <String, dynamic>{
+                                      "time": selectedReportList,
+                                      "meals": repeat[_defaultChoiceIndex],
+                                      "medicine": _medicine.text,
+                                      "days": _days.text
                                     };
                                     Navigator.of(context).pop();
                                     var snapShot = await FirebaseFirestore.instance
                                         .collection("patients")
                                         .where("mobile", isEqualTo: phone)
                                         .get();
-                                    print(phone);
+                                    print(selectedReportList);
                                     FirebaseFirestore.instance
                                         .collection("patients")
                                         .doc(snapShot.docs[0].id)
@@ -161,24 +200,32 @@ class _PatientInfoDocVersionState extends State<PatientInfoDocVersion> {
 
 class MultiSelectChip extends StatefulWidget {
   final List<String> reportList;
-  MultiSelectChip(this.reportList);
+  final Function(List<String>) onSelectionChanged; // +added
+  MultiSelectChip(
+      this.reportList,
+      {this.onSelectionChanged} // +added
+      );
   @override
   _MultiSelectChipState createState() => _MultiSelectChipState();
 }
 class _MultiSelectChipState extends State<MultiSelectChip> {
   String selectedChoice = "";
   // this function will build and return the choice list
+  List<String> selectedChoices = [];
   _buildChoiceList() {
-    List<Widget> choices = List();
+    List<Widget> choices = [];
     widget.reportList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),
         child: ChoiceChip(
           label: Text(item),
-          selected: selectedChoice == item,
+          selected: selectedChoices.contains(item),
           onSelected: (selected) {
             setState(() {
-              selectedChoice = item;
+              selectedChoices.contains(item)
+                  ? selectedChoices.remove(item)
+                  : selectedChoices.add(item);
+              widget.onSelectionChanged(selectedChoices);
             });
           },
         ),
