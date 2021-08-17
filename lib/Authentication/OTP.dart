@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter/widgets.dart';
 import 'package:healthify/Authentication/EnterMobile.dart';
+import 'package:healthify/PatientInfo.dart';
 import 'package:healthify/StaffDashboard.dart';
 import 'package:healthify/docHomePage.dart';
 import 'package:healthify/scanPreview.dart';
@@ -69,11 +71,16 @@ class _OTPState extends State<OTP> {
     super.dispose();
   }
 
+  _getNotificationToken() {
+    return FirebaseMessaging.instance.getToken();
+  }
+
   Future<bool> loginUser(BuildContext context) async {
     _auth.verifyPhoneNumber(
         phoneNumber: "+91" + widget.phone.trim(),
         timeout: Duration(seconds: 60),
         verificationCompleted: (AuthCredential credential) async {
+          String token = await _getNotificationToken();
           //Navigator.of(context).pop();
           try {
             var result = await _auth.signInWithCredential(credential);
@@ -87,17 +94,37 @@ class _OTPState extends State<OTP> {
           var snapShot1 = await FirebaseFirestore.instance.collection("patients")
               .where("mobile", isEqualTo: widget.phone.trim()).get();
           if(snapShot.docs.length==1){
+            FirebaseFirestore.instance.collection("doctors")
+                .doc(snapShot.docs[0].id)
+                .update({"notification_token": token});
             Navigator.pop(context);
             Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => (DocHomePage())));
           }else if(snapShot1.docs.length==1){
-            Navigator.pop(context);
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => (ScanPreview())));
+            FirebaseFirestore.instance.collection("patients")
+                .doc(snapShot.docs[0].id)
+                .update({"notification_token": token});
+            if(snapShot1.docs[0].data()["admitted"]=="NO") {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (
+                      context) => (ScanPreview())));
+            }else{
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (
+                      context) => (PatientInfo())));
+            }
           }
           else {
+            FirebaseFirestore.instance.collection("staff")
+                .doc(snapShot.docs[0].id)
+                .set({
+              "mobile": FirebaseAuth.instance.currentUser.phoneNumber,
+              "notification_token": token});
             Navigator.pop(context);
             Navigator.push(
                 context,
@@ -349,6 +376,7 @@ class _OTPState extends State<OTP> {
                     ),
                   ),
                   onPressed: () async {
+                    String token = await _getNotificationToken();
                     SharedPreferences pref =
                     await SharedPreferences.getInstance();
                     // final code1 = code.text.trim();
@@ -367,17 +395,38 @@ class _OTPState extends State<OTP> {
                       var snapShot1 = await FirebaseFirestore.instance.collection("patients")
                           .where("mobile", isEqualTo: widget.phone.trim()).get();
                       if(snapShot.docs.length==1){
+                        FirebaseFirestore.instance.collection("doctors")
+                            .doc(snapShot.docs[0].id)
+                            .update({"notification_token": token});
                         Navigator.pop(context);
                         Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => (DocHomePage())));
                       }else if(snapShot1.docs.length==1){
-                        Navigator.pop(context);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => (ScanPreview())));
+                        FirebaseFirestore.instance.collection("patients")
+                            .doc(snapShot1.docs[0].id)
+                            .update({"notification_token": token}).then((value) {
+                        if(snapShot1.docs[0].data()["admitted"]=="NO") {
+                          Navigator.pop(context);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (
+                                  context) => (ScanPreview())));
+                        }else{
+                          Navigator.pop(context);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (
+                                  context) => (PatientInfo())));
+                        }
+                        });
                       }
                       else {
+                        FirebaseFirestore.instance.collection("staff")
+                            .doc()
+                            .set({
+                          "mobile": FirebaseAuth.instance.currentUser.phoneNumber,
+                          "notification_token": token});
                         Navigator.pop(context);
                         Navigator.push(
                             context,

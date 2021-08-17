@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -22,7 +23,6 @@ class _ScanPreviewState extends State<ScanPreview> {
   String gender="";
   String doctor="";
   String _scanBarcode = 'Unknown';
-
 
   _get () async {
     var snapShot = await FirebaseFirestore.instance.collection("patients")
