@@ -69,7 +69,7 @@ class _ScanPreviewState extends State<ScanPreview> {
           .then((value) async {
         var snapShot = await FirebaseFirestore.instance.collection("beds").where("floor", isEqualTo: floor)
             .where("room", isEqualTo: room).get();
-        FirebaseFirestore.instance.collection("beds").doc(snapShot.docs[0].id).update({"status":"filled"});
+        FirebaseFirestore.instance.collection("beds").doc(snapShot.docs[0].id).update({"status":"filled","uid":user.uid});
         Navigator.pop(context);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => PatientInfo()));

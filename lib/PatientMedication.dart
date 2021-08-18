@@ -50,9 +50,15 @@ class _PatientMedicationState extends State<PatientMedication> {
                         ],
                       ),
                       child: Card(
-                        child: ListTile(
-                          title: Text(doc['medicine']+"\t"+doc['days']+" days"),
-                          subtitle: Text(doc['meals']+"\n"+doc['time'].toString()),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            title: Text(doc['medicine']+"\t"+doc['days']+" days"),
+                            subtitle: Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(doc['meals']+"\n"+doc['time'].toString()),
+                            ),
+                          ),
                         ),
                       ),
                     ),

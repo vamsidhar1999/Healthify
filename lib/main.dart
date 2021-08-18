@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healthify/Authentication/EnterMobile.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:healthify/Authentication/SplashScreen.dart';
+import 'package:healthify/changeCrypto.dart';
 
 void main() {
   runApp(MyApp());
