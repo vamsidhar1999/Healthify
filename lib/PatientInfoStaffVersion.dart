@@ -78,8 +78,8 @@ class _PatientInfoStaffVersionState extends State<PatientInfoStaffVersion> {
                               ),
                               ElevatedButton(
                                   onPressed: () async {
-                                    Map<String, String> data = <String, String>{
-                                      "time": time,
+                                    Map<String, dynamic> data = <String, dynamic>{
+                                      "time": DateTime.now().millisecondsSinceEpoch,
                                       "record": _record.text
                                     };
                                     Navigator.of(context).pop();

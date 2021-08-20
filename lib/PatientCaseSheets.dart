@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PatientCaseSheets extends StatefulWidget {
 
@@ -50,9 +51,13 @@ class _PatientCaseSheetsState extends State<PatientCaseSheets> {
                         ],
                       ),
                       child: Card(
-                        child: ListTile(
-                          title: Text(doc['time']),
-                          subtitle: Text(doc['record']),
+                        color: Colors.grey.shade300,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            title: Text(DateFormat('dd-MM-yyyy – kk:mm').format(DateTime.fromMillisecondsSinceEpoch(doc['time']))),
+                            subtitle: Text(doc['record']),
+                          ),
                         ),
                       ),
                     ),

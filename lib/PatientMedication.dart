@@ -50,6 +50,7 @@ class _PatientMedicationState extends State<PatientMedication> {
                         ],
                       ),
                       child: Card(
+                        color: Colors.grey.shade300,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(

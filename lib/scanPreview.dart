@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -115,47 +116,126 @@ class _ScanPreviewState extends State<ScanPreview> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Scan"),
+        title: Text("Scan Code to Admission"),
       ),
       body: Column(
         children: [
-          Row(
-            children: [
-              Text("Patient Name"),
-              Text(name),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              height: 40,
+              decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(5)
+              ),
+              child: Row(
+                children: [
+                  Text("Patient Name : ", style: TextStyle(fontSize: 20),),
+                  Text(name, style: TextStyle(fontSize: 20),),
+                ],
+              ),
+            ),
           ),
-          Row(
-            children: [
-              Text("Mobile"),
-              Text(mobile),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              height: 40,
+              decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(5)
+              ),
+              child: Row(
+                children: [
+                  Text("Mobile : ", style: TextStyle(fontSize: 20),),
+                  Text(mobile, style: TextStyle(fontSize: 20),),
+                ],
+              ),
+            ),
           ),
-          Row(
-            children: [
-              Text("Age"),
-              Text(age),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              height: 40,
+              decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(5)
+              ),
+              child: Row(
+                children: [
+                  Text("Age : ", style: TextStyle(fontSize: 20),),
+                  Text(age, style: TextStyle(fontSize: 20),),
+                ],
+              ),
+            ),
           ),
-          Row(
-            children: [
-              Text("Gender"),
-              Text(gender),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              height: 40,
+              decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(5)
+              ),
+              child: Row(
+                children: [
+                  Text("Gender : ", style: TextStyle(fontSize: 20),),
+                  Text(gender, style: TextStyle(fontSize: 20),),
+                ],
+              ),
+            ),
           ),
-          Row(
-            children: [
-              Text("Doctor Name"),
-              Text(doctor),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              height: 40,
+              decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(5)
+              ),
+              child: Row(
+                children: [
+                  Text("Doctor Name : ", style: TextStyle(fontSize: 20),),
+                  Text(doctor, style: TextStyle(fontSize: 20),),
+                ],
+              ),
+            ),
           ),
-          Row(
-            children: [
-              Text("floor - $floor, "),
-              Text(room),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              height: 40,
+              decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(5)
+              ),
+              child: Row(
+                children: [
+                  Text("floor - $floor, ", style: TextStyle(fontSize: 20),),
+                  Text(room, style: TextStyle(fontSize: 20),),
+                ],
+              ),
+            ),
           ),
-          ElevatedButton(onPressed: scanBarcodeNormal, child: Text("Scan"))
+        ],
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.blue
+            ),
+            child: MaterialButton(
+                onPressed: scanBarcodeNormal, child: Text("Scan", style: TextStyle(fontSize: 20, color: Colors.white),)
+            ),
+          ),
         ],
       ),
     );
