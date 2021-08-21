@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_format/date_format.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:healthify/Authentication/EnterMobile.dart';
 import 'package:healthify/PatientCaseSheets.dart';
 import 'package:healthify/PatientMedication.dart';
 
@@ -38,16 +40,16 @@ class _PatientInfoStaffVersionState extends State<PatientInfoStaffVersion> {
                           SimpleDialog(
                             title: Text('Case Sheets'),
                             children: <Widget>[
-                              GestureDetector(
-                                onTap: () {
-                                  _selectTime(context).then((value) {
-                                    setState(() {
-                                      time = value.toString();
-                                    });
-                                  });
-                                },
-                                child: Text(time)
-                              ),
+                              // GestureDetector(
+                              //   onTap: () {
+                              //     _selectTime(context).then((value) {
+                              //       setState(() {
+                              //         time = value.toString();
+                              //       });
+                              //     });
+                              //   },
+                              //   child: Text(time)
+                              // ),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
                                 child: Container(
@@ -126,7 +128,30 @@ class _PatientInfoStaffVersionState extends State<PatientInfoStaffVersion> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.purple,
         title: Text("Patient Info"),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text('Menu'),
+            ),
+            ListTile(
+              title: const Text('Logout'),
+              onTap: () {
+                Navigator.pop(context);
+                FirebaseAuth.instance.signOut();
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => EnterMobile()));
+              },
+            ),
+          ],
+        ),
       ),
       body: DefaultTabController(
           length: 2,

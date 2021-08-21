@@ -116,6 +116,7 @@ class _ScanPreviewState extends State<ScanPreview> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.purple,
         title: Text("Scan Code to Admission"),
       ),
       body: Column(

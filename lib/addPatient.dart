@@ -108,6 +108,7 @@ class _AddPatientState extends State<AddPatient> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.purple,
         title: Text("Admit Patient"),
         automaticallyImplyLeading: false,
       ),

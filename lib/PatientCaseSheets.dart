@@ -64,7 +64,7 @@ class _PatientCaseSheetsState extends State<PatientCaseSheets> {
                   ))
                       .toList());
             } else {
-              return Text("No Case Sheet records yet", style: TextStyle(color: Colors.black),);
+              return Center(child: Text("No Case Sheet records yet", style: TextStyle(color: Colors.black),));
             }
           }),
     );

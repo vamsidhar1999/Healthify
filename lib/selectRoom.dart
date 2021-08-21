@@ -18,6 +18,7 @@ class _SelectRoomState extends State<SelectRoom> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.purple,
         title: Text("Select Room"),
         automaticallyImplyLeading: false,
       ),

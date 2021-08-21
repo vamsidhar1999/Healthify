@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:healthify/Authentication/EnterMobile.dart';
 import 'package:healthify/PatientCaseSheets.dart';
 import 'package:healthify/PatientMedication.dart';
 
@@ -102,55 +104,63 @@ class _PatientInfoDocVersionState extends State<PatientInfoDocVersion> {
                                   ),
                                 ),
                               ),
-                              Wrap(
-                                spacing: 6.0,
-                                runSpacing: 6.0,
-                                children: List<Widget>.generate(
-                                  2,
-                                      (int index) {
-                                    return ChoiceChip(
-                                      label: Text(repeat[index]),
-                                      selected: index == _defaultChoiceIndex,
-                                      selectedColor: Colors.blue,
-                                      onSelected: (bool selected) {
-                                        setState(() {
-                                          _defaultChoiceIndex = selected ? index : index;
-                                        });
-                                      },
-                                      // backgroundColor: primaryColor,
-                                      labelStyle: TextStyle(color: Colors.white),
-                                    );
-                                  },
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Wrap(
+                                  spacing: 6.0,
+                                  runSpacing: 6.0,
+                                  children: List<Widget>.generate(
+                                    2,
+                                        (int index) {
+                                      return ChoiceChip(
+                                        label: Text(repeat[index]),
+                                        selected: index == _defaultChoiceIndex,
+                                        onSelected: (bool selected) {
+                                          setState(() {
+                                            _defaultChoiceIndex = selected ? index : index;
+                                          });
+                                        },
+                                        // backgroundColor: primaryColor,
+                                        labelStyle: TextStyle(color: Colors.white),
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
-                              MultiSelectChip(time, onSelectionChanged: (selectedList) {
-                                print(selectedList);
-                                setState(() {
-                                  selectedReportList = selectedList;
-                                });
-                              },),
-                              ElevatedButton(
-                                  onPressed: () async {
-                                    Map<String, dynamic> data = <String, dynamic>{
-                                      "time": selectedReportList,
-                                      "meals": repeat[_defaultChoiceIndex],
-                                      "medicine": _medicine.text,
-                                      "days": _days.text
-                                    };
-                                    Navigator.of(context).pop();
-                                    var snapShot = await FirebaseFirestore.instance
-                                        .collection("patients")
-                                        .where("mobile", isEqualTo: phone)
-                                        .get();
-                                    print(selectedReportList);
-                                    FirebaseFirestore.instance
-                                        .collection("patients")
-                                        .doc(snapShot.docs[0].id)
-                                        .collection("Medications")
-                                        .doc()
-                                        .set(data);
-                                  },
-                                  child: Text("Submit")),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: MultiSelectChip(time, onSelectionChanged: (selectedList) {
+                                  print(selectedList);
+                                  setState(() {
+                                    selectedReportList = selectedList;
+                                  });
+                                },),
+                              ),
+                              Center(
+                                child: MaterialButton(
+                                  color: Colors.purple,
+                                    onPressed: () async {
+                                      Map<String, dynamic> data = <String, dynamic>{
+                                        "time": selectedReportList,
+                                        "meals": repeat[_defaultChoiceIndex],
+                                        "medicine": _medicine.text,
+                                        "days": _days.text
+                                      };
+                                      Navigator.of(context).pop();
+                                      var snapShot = await FirebaseFirestore.instance
+                                          .collection("patients")
+                                          .where("mobile", isEqualTo: phone)
+                                          .get();
+                                      print(selectedReportList);
+                                      FirebaseFirestore.instance
+                                          .collection("patients")
+                                          .doc(snapShot.docs[0].id)
+                                          .collection("Medications")
+                                          .doc()
+                                          .set(data);
+                                    },
+                                    child: Text("Submit", style: TextStyle(color: Colors.white),)),
+                              ),
                             ],
                           ),
                         ],
@@ -168,7 +178,9 @@ class _PatientInfoDocVersionState extends State<PatientInfoDocVersion> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.purple,
         title: Text("Patient Info"),
+        automaticallyImplyLeading: false,
       ),
       body: DefaultTabController(length: 2, child: Column(
         mainAxisSize: MainAxisSize.min,

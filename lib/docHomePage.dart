@@ -31,8 +31,30 @@ class _DocHomePageState extends State<DocHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.purple,
         title: Text("Patients"),
-        automaticallyImplyLeading: false,
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.purple,
+              ),
+              child: Text('Menu', style: TextStyle(color: Colors.white),),
+            ),
+            ListTile(
+              title: const Text('Logout'),
+              onTap: () {
+                Navigator.pop(context);
+                FirebaseAuth.instance.signOut();
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => EnterMobile()));
+              },
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [
@@ -78,19 +100,6 @@ class _DocHomePageState extends State<DocHomePage> {
                   return Text("It's Error!");
                 }
               }),
-          Center(
-            child: Container(
-              child: ElevatedButton(
-                child: Text("Logout"),
-                onPressed: () {
-                  FirebaseAuth.instance.signOut();
-                  Navigator.pop(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => (EnterMobile())));
-                },
-              ),
-            ),
-          ),
         ],
       ),
     );

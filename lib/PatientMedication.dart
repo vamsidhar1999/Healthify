@@ -66,7 +66,7 @@ class _PatientMedicationState extends State<PatientMedication> {
                   ))
                       .toList());
             } else {
-              return Text("No medication records yet", style: TextStyle(color: Colors.black),);
+              return Center(child: Text("No medication records yet", style: TextStyle(color: Colors.black),));
             }
           }),
     );
