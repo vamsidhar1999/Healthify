@@ -23,6 +23,9 @@ class _PatientInfoStaffVersionState extends State<PatientInfoStaffVersion> {
   TextEditingController _timeController = TextEditingController();
   TextEditingController _record = TextEditingController();
 
+  String temperature = "0.0";
+  String pulse = "0";
+
   _addCaseSheets() {
     return showDialog(
         context: context,
@@ -158,6 +161,54 @@ class _PatientInfoStaffVersionState extends State<PatientInfoStaffVersion> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              StreamBuilder(
+                  stream:  FirebaseFirestore.instance.collection("patients").where("mobile", isEqualTo: phone).snapshots(),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                    if (!snapshot.hasData) {
+                      // return Loader();
+                    }
+                    temperature = snapshot.data.docs[0]["temperature"].toString();
+                    pulse = snapshot.data.docs[0]["pulse"].toString();
+                    if (snapshot.connectionState == ConnectionState.done) {
+
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Container(
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.purple,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          //  color: snapshot.data,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Column(
+                                    children: [
+                                      Text("Temperature", style: TextStyle(color: Colors.white),),
+                                      SizedBox(height: 10,),
+                                      Text(temperature, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text("Pulse", style: TextStyle(color: Colors.white),),
+                                      SizedBox(height: 10,),
+                                      Text(pulse, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ],
+                          )
+                      ),
+                    );
+                  }),
               Container(
                 child: TabBar(
                   tabs: [

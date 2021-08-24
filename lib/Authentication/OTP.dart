@@ -121,7 +121,7 @@ class _OTPState extends State<OTP> {
           }
           else {
             FirebaseFirestore.instance.collection("staff")
-                .doc(snapShot.docs[0].id)
+                .doc(user.uid)
                 .set({
               "mobile": FirebaseAuth.instance.currentUser.phoneNumber.substring(3),
               "notification_token": token});
@@ -423,9 +423,9 @@ class _OTPState extends State<OTP> {
                       }
                       else {
                         FirebaseFirestore.instance.collection("staff")
-                            .doc()
+                            .doc(user.uid)
                             .set({
-                          "mobile": FirebaseAuth.instance.currentUser.phoneNumber,
+                          "mobile": FirebaseAuth.instance.currentUser.phoneNumber.substring(3),
                           "notification_token": token});
                         Navigator.pop(context);
                         Navigator.push(
