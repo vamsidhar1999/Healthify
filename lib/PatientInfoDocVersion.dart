@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:healthify/Authentication/EnterMobile.dart';
 import 'package:healthify/PatientCaseSheets.dart';
 import 'package:healthify/PatientMedication.dart';
+import 'package:intl/intl.dart';
 
 class PatientInfoDocVersion extends StatefulWidget {
 
@@ -30,6 +31,38 @@ class _PatientInfoDocVersionState extends State<PatientInfoDocVersion> {
 
   String temperature = "0.0";
   String pulse = "0";
+
+  String name="";
+  String mobile="";
+  String room="";
+  String floor="";
+  String age="";
+  String gender="";
+  String doctor="";
+  int admit_time=0;
+
+  _get () async {
+    var snapShot = await FirebaseFirestore.instance.collection("patients")
+        .where("mobile", isEqualTo: phone)
+        .get();
+    setState(() {
+      name = snapShot.docs[0].data()["name"];
+      floor = snapShot.docs[0].data()["floor"];
+      mobile = snapShot.docs[0].data()["mobile"];
+      gender = snapShot.docs[0].data()["gender"];
+      age = snapShot.docs[0].data()["age"];
+      doctor = snapShot.docs[0].data()["doctor"];
+      room = snapShot.docs[0].data()["room"];
+      admit_time = snapShot.docs[0].data()["admitted_time"];
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _get();
+    super.initState();
+  }
 
   _addMedication() {
     return showDialog(
@@ -175,6 +208,24 @@ class _PatientInfoDocVersionState extends State<PatientInfoDocVersion> {
         });
   }
 
+  void handleClick(String value) async {
+    switch (value) {
+      case 'Discharge':
+          var snapShot = await FirebaseFirestore.instance
+              .collection("patients")
+              .where("mobile", isEqualTo: phone)
+              .get();
+          FirebaseFirestore.instance
+              .collection("patients")
+              .doc(snapShot.docs[0].id)
+              .update({
+            "admitted": "NO",
+            "discharge_permission": true
+          });
+          break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,74 +233,113 @@ class _PatientInfoDocVersionState extends State<PatientInfoDocVersion> {
         backgroundColor: Colors.purple,
         title: Text("Patient Info"),
         automaticallyImplyLeading: false,
-      ),
-      body: DefaultTabController(length: 2, child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          StreamBuilder(
-              stream:  FirebaseFirestore.instance.collection("patients").where("mobile", isEqualTo: phone).snapshots(),
-              builder:
-                  (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if (!snapshot.hasData) {
-                  // return Loader();
-                }
-                temperature = snapshot.data.docs[0]["temperature"].toString();
-                pulse = snapshot.data.docs[0]["pulse"].toString();
-                if (snapshot.connectionState == ConnectionState.done) {
-
-                }
-                return Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Container(
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.purple,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      //  color: snapshot.data,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Column(
-                                children: [
-                                  Text("Temperature", style: TextStyle(color: Colors.white),),
-                                  SizedBox(height: 10,),
-                                  Text(temperature, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text("Pulse", style: TextStyle(color: Colors.white),),
-                                  SizedBox(height: 10,),
-                                  Text(pulse, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),),
-                                ],
-                              )
-                            ],
-                          ),
-                        ],
-                      )
-                  ),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: handleClick,
+            itemBuilder: (BuildContext context) {
+              return {'Discharge'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
                 );
-              }),
-          Container(
-            child: TabBar(
-              tabs: [
-                Tab(child: Text("Medications", style: TextStyle(color: Colors.black),),),
-                Tab(child: Text("Case Sheets", style: TextStyle(color: Colors.black),),),
-              ],
-            ),
+              }).toList();
+            },
           ),
-          Container(
-            height: MediaQuery.of(context).size.height/2,
-            child: TabBarView(children: [
-              PatientMedication(phone),
-              PatientCaseSheets(phone)
-            ]),
-          )
         ],
+      ),
+      body: DefaultTabController(length: 2, child: SingleChildScrollView(
+        physics: ScrollPhysics(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 8.0),
+              child: Container(
+                width: MediaQuery.of(context).size.width*0.9,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.grey.shade200
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Name :    "+name),
+                    Text("Mobile :  "+mobile),
+                    Text("Age :       "+age),
+                    Text("Gender :  "+gender),
+                    Text("Doctor :  "+doctor),
+                    Text("floor & room - "+floor+", "+room),
+                    Text("Admitted Date & Time - "+DateFormat('dd-MM-yyyy – kk:mm').format(DateTime.fromMillisecondsSinceEpoch(admit_time)).toString()),
+                  ],
+                ),
+              ),
+            ),
+            StreamBuilder(
+                stream:  FirebaseFirestore.instance.collection("patients").where("mobile", isEqualTo: phone).snapshots(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if (!snapshot.hasData) {
+                    // return Loader();
+                  }
+                  temperature = snapshot.data.docs[0]["temperature"].toString();
+                  pulse = snapshot.data.docs[0]["pulse"].toString();
+                  if (snapshot.connectionState == ConnectionState.done) {
+
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Container(
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: Colors.purple,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                        //  color: snapshot.data,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Column(
+                                  children: [
+                                    Text("Temperature", style: TextStyle(color: Colors.white),),
+                                    SizedBox(height: 10,),
+                                    Text(temperature, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Text("Pulse", style: TextStyle(color: Colors.white),),
+                                    SizedBox(height: 10,),
+                                    Text(pulse, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ],
+                        )
+                    ),
+                  );
+                }),
+            Container(
+              child: TabBar(
+                tabs: [
+                  Tab(child: Text("Medications", style: TextStyle(color: Colors.black),),),
+                  Tab(child: Text("Case Sheets", style: TextStyle(color: Colors.black),),),
+                ],
+              ),
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height/2,
+              child: TabBarView(children: [
+                PatientMedication(phone),
+                PatientCaseSheets(phone)
+              ]),
+            )
+          ],
+        ),
       )),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),

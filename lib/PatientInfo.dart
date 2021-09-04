@@ -2,8 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healthify/Authentication/EnterMobile.dart';
+import 'package:healthify/PatientBillings.dart';
 import 'package:healthify/PatientCaseSheets.dart';
 import 'package:healthify/PatientMedication.dart';
+import 'package:healthify/patientDetails.dart';
+import 'package:healthify/scanPreview.dart';
 
 class PatientInfo extends StatefulWidget {
   const PatientInfo({Key key}) : super(key: key);
@@ -23,12 +26,40 @@ class _PatientInfoState extends State<PatientInfo> {
     return snapShot;
   }
 
+  void handleClick(String value) {
+    switch (value) {
+      case 'Discharge':
+        Navigator.pop(context);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => ScanPreview()));
+        break;
+      case 'Billings':
+        Navigator.pop(context);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => PatientBillings(phone)));
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purple,
-        title: Text("Patient Info"),
+        title: Text("Patient Dashboard"),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: handleClick,
+            itemBuilder: (BuildContext context) {
+              return {'Billings', 'Discharge'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -39,6 +70,14 @@ class _PatientInfoState extends State<PatientInfo> {
                 color: Colors.blue,
               ),
               child: Text('Menu'),
+            ),
+            ListTile(
+              title: const Text('Patient info'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => PatientDetails()));
+              },
             ),
             ListTile(
               title: const Text('Logout'),
@@ -58,7 +97,7 @@ class _PatientInfoState extends State<PatientInfo> {
           mainAxisSize: MainAxisSize.min,
           children: [
             StreamBuilder(
-                stream: FirebaseFirestore.instance.collection("patients").doc(FirebaseAuth.instance.currentUser.uid).snapshots(),
+                stream: FirebaseFirestore.instance.collection("patients").doc('Zxmueuiq2rRpO1Qsy40PEA6xS443').snapshots(),
                 builder:
                     (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                   if (!snapshot.hasData) {

@@ -62,10 +62,12 @@ class _ScanPreviewState extends State<ScanPreview> {
       final user = FirebaseAuth.instance.currentUser;
       Map<String, dynamic> data = <String, dynamic>{
         "admitted": "YES",
+        "admitted_time": DateTime.now().millisecondsSinceEpoch,
       };
+      var snapShot1 = await FirebaseFirestore.instance.collection("patients").where("mobile", isEqualTo: FirebaseAuth.instance.currentUser.phoneNumber.substring(3)).get();
       FirebaseFirestore.instance
           .collection("patients")
-          .doc(user.uid)
+          .doc(snapShot1.docs[0].id)
           .update(data)
           .then((value) async {
         var snapShot = await FirebaseFirestore.instance.collection("beds").where("floor", isEqualTo: floor)

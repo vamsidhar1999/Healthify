@@ -82,17 +82,20 @@ class _AddPatientState extends State<AddPatient> {
       "name": _name.text,
       "age": _age.text,
       "gender": gender_value == 0 ? "Male": "Female",
-      "mobile": user.phoneNumber.toString().substring(3),
+      "mobile": _mobile.text,
       "doctor": dropdownValue,
       "address": _address.text,
       "diagnosis": _diagnosis.text,
       "floor": floor,
       "admitted": "NO",
-      "room": room
+      "room": room,
+      "total_amount_due": 0,
+      "temperature": "0.0",
+      "pulse": "0"
     };
     FirebaseFirestore.instance
         .collection("patients")
-        .doc(user.uid)
+        .doc('sHLKrDWoRyCwCsOyGNh1')
         .set(data)
         .then((value) async {
           var snapShot = await FirebaseFirestore.instance.collection("beds").where("floor", isEqualTo: floor)
